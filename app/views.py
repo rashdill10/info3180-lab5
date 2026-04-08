@@ -5,10 +5,13 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from app import app
+from app import app,db
 from flask import render_template, request, jsonify, send_file
 import os
-
+from app.forms import MovieForm
+from app.models import Movie
+from datetime import datetime
+from werkzeug.utils import secure_filename
 
 ###
 # Routing for your application.
