@@ -1,6 +1,17 @@
 <template>
   <div class="container">
     <h1>Upload Form</h1>
+
+    <div v-if="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <div v-if="errors.length > 0" class="alert alert-danger">
+      <ul>
+        <li v-for="error in errors" :key="error">{{ error }}</li>
+      </ul>
+    </div>
+
     <form id="movieForm" @submit.prevent="saveMovie">
       <div class="form-group mb-3">
         <label for="title" class="form-label">Movie Title</label>
@@ -23,6 +34,8 @@
 import { ref, onMounted } from "vue";
 
 let csrf_token = ref("");
+let successMessage = ref("");
+let errors = ref([]);
 
 function getCsrfToken() {
   fetch('/api/v1/csrf-token')
@@ -46,7 +59,13 @@ function saveMovie() {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
+      if (data.errors) {
+        errors.value = data.errors;
+        successMessage.value = "";
+      } else {
+        successMessage.value = data.message;
+        errors.value = [];
+      }
     })
     .catch(function (error) {
       console.log(error);
